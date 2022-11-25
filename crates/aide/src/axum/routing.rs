@@ -79,7 +79,7 @@ macro_rules! method_router_chain_method {
             H: Handler<T, S, B> + OperationHandler<I, O>,
             I: OperationInput,
             O: OperationOutput,
-            B: Send + 'static,
+            B: Send + 'static + ::axum::body::HttpBody,
             T: 'static,
         {
             let mut operation = Operation::default();
@@ -104,7 +104,7 @@ macro_rules! method_router_chain_method {
             H: Handler<T, S, B> + OperationHandler<I, O>,
             I: OperationInput,
             O: OperationOutput,
-            B: Send + 'static,
+            B: Send + 'static + ::axum::body::HttpBody,
             T: 'static,
             F: FnOnce(TransformOperation) -> TransformOperation,
         {
@@ -140,9 +140,9 @@ macro_rules! method_router_top_level {
             H: Handler<T, S, B> + OperationHandler<I, O>,
             I: OperationInput,
             O: OperationOutput,
-            B: Send + Sync + 'static,
+            B: Send + Sync + 'static + ::axum::body::HttpBody,
             S: Clone + Send + Sync + 'static,
-            T: 'static,
+            T: 'static
         {
             let mut router = ApiMethodRouter::new(routing::$name(handler));
             let mut operation = Operation::default();
@@ -175,7 +175,7 @@ macro_rules! method_router_top_level {
             B: Send + Sync + 'static,
             S: Clone + Send + Sync + 'static,
             T: 'static,
-            F: FnOnce(TransformOperation) -> TransformOperation,
+            F: FnOnce(TransformOperation) -> TransformOperation, B: axum::body::HttpBody
         {
             let mut router = ApiMethodRouter::new(routing::$name(handler));
             let mut operation = Operation::default();
@@ -235,7 +235,7 @@ fn set_inferred_response(
 impl<S, B> ApiMethodRouter<S, B, Infallible>
 where
     S: Clone + Send + Sync + 'static,
-    B: Send + Sync + 'static,
+    B: Send + Sync + 'static + axum::body::HttpBody,
 {
     method_router_chain_method!(delete, delete_with);
     method_router_chain_method!(get, get_with);
@@ -263,7 +263,7 @@ where
             + 'static,
         <L::Service as Service<Request<NewReqBody>>>::Future: Send + 'static,
         NewResBody: 'static,
-        NewReqBody: 'static,
+        NewReqBody: 'static + axum::body::HttpBody,
         NewError: 'static,
         NewResBody: HttpBody<Data = Bytes> + Send + 'static,
         NewResBody::Error: Into<BoxError>,

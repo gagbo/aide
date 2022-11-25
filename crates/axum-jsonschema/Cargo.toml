@@ -14,7 +14,7 @@ aide = { version = "0.8.0-rc.1", path = "../aide", optional = true, features = [
     "axum",
 ] }
 async-trait = "0.1.57"
-axum = { version = "0.6.0-rc.5", default-features = false, features = ["json"] }
+axum = { version = "0.6.0", default-features = false, features = ["json"] }
 http = "0.2.8"
 http-body = "0.4.5"
 jsonschema = { version = "0.16.0", default-features = false }
